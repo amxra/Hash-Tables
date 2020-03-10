@@ -53,8 +53,18 @@ class HashTable:
         '''
         index = self.hash_mod(key)
         if self.storage[index]:
-            return "Error! There is a collision at this index"
-        self.storage[index] = LinkedPair(key, value)
+            current = self.storage[index]
+            if current.key == key:
+                current.value = value
+                return
+            while current.next:
+                current = current.next
+                if current.key == key:
+                    current.value = value
+                    return
+            current.next = LinkedPair(key,value)
+        else:
+            self.storage[index] = LinkedPair(key, value)
 
 
 
@@ -69,7 +79,16 @@ class HashTable:
         index = self._hash_mod(key)
         if not self.storage[index]:
             return "Error! Key could not be found"
-        self.storage[index] = None
+        current = self.storage[index]
+        if current.key == key and current.next is None:
+            self.storage[index] = None
+            return
+        while current.next:
+            previous = current
+            current = current.next
+            if current.key == key:
+                previous.next = current.next
+                return
 
 
 
@@ -83,8 +102,12 @@ class HashTable:
         '''
         index = self._hash_mod(key)
         if not self.storage[index]:
-            return "Error! Key could not be found"
-        return self.storage[index].value
+           return
+        current = self.storage[index]
+        while current:
+            if key == current.key:
+                return current.value
+            current = current.next
 
 
     def resize(self):
