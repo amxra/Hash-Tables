@@ -51,7 +51,20 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self.hash_mod(key)
+        if self.storage[index]:
+            current = self.storage[index]
+            if current.key == key:
+                current.value = value
+                return
+            while current.next:
+                current = current.next
+                if current.key == key:
+                    current.value = value
+                    return
+            current.next = LinkedPair(key,value)
+        else:
+            self.storage[index] = LinkedPair(key, value)
 
 
 
@@ -63,7 +76,20 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if not self.storage[index]:
+            return "Error! Key could not be found"
+        current = self.storage[index]
+        if current.key == key and current.next is None:
+            self.storage[index] = None
+            return
+        while current.next:
+            previous = current
+            current = current.next
+            if current.key == key:
+                previous.next = current.next
+                return
+
 
 
     def retrieve(self, key):
@@ -74,7 +100,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if not self.storage[index]:
+           return
+        current = self.storage[index]
+        while current:
+            if key == current.key:
+                return current.value
+            current = current.next
 
 
     def resize(self):
@@ -84,7 +117,10 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        new_storage = [None] * self.capacity * 2
+        for i in range(len(self.storage)):
+            new_storage[i] = self.storage[i]
+        self.storage = new_storage
 
 
 
